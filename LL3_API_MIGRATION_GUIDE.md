@@ -4,9 +4,9 @@
 
 During the LeviLamina 3 v1.2.0 compatibility update, we discovered significant breaking changes in the PlayerUseItemEvent API that required migration to a different event.
 
-## ⚠️ **PlayerUseItemEvent API Changes**
+## ⚠️ **Multiple API Breaking Changes Discovered**
 
-### **What Changed**
+### **1. PlayerUseItemEvent API Changes**
 
 The `PlayerUseItemEvent` class in LeviLamina 1.2.0 has a completely different API structure:
 
@@ -14,7 +14,7 @@ The `PlayerUseItemEvent` class in LeviLamina 1.2.0 has a completely different AP
 ```cpp
 // These methods no longer exist:
 event.getItemStack()  // ❌ REMOVED
-event.getPlayer()     // ❌ REMOVED  
+event.getPlayer()     // ❌ REMOVED
 event.getBlockPos()   // ❌ REMOVED
 ```
 
@@ -26,9 +26,38 @@ event.self()          // ✅ Available (inherited from PlayerEvent)
 // No block position available ❌
 ```
 
-### **The Problem**
+### **2. Dimension API Changes**
 
-The new `PlayerUseItemEvent` **no longer provides block position information**, which is essential for our potato crop detection functionality.
+**Old API (Pre-1.2.0):**
+```cpp
+auto& dimension = player.getDimension();
+const auto& block = dimension.getBlock(blockPos);  // ❌ REMOVED
+```
+
+**New API (1.2.0+):**
+```cpp
+auto& dimension = player.getDimension();
+auto& blockSource = dimension.getBlockSourceFromMainChunkSource();  // ✅ Required
+const auto& block = blockSource.getBlock(blockPos);  // ✅ Available
+```
+
+### **3. Player API Changes**
+
+**Old API (Pre-1.2.0):**
+```cpp
+auto playerName = player.getName();  // ❌ REMOVED
+```
+
+**New API (1.2.0+):**
+```cpp
+auto playerName = player.getRealName();  // ✅ Available
+```
+
+### **The Problems**
+
+1. The new `PlayerUseItemEvent` **no longer provides block position information**, which is essential for our potato crop detection functionality.
+2. The `Dimension::getBlock()` method **no longer exists**, breaking block retrieval.
+3. The `Player::getName()` method **no longer exists**, breaking player name access.
 
 ## ✅ **Solution: Migrate to PlayerInteractBlockEvent**
 
@@ -102,17 +131,21 @@ void PotatoBoneMealBlocker::onPlayerInteractBlock(ll::event::PlayerInteractBlock
     const auto& itemStack = event.item();
     auto& player = event.self();
     const auto& blockPos = event.blockPos();
-    
+
     // Enhanced: Direct block access for better performance
     auto blockRef = event.block();
     if (blockRef.has_value()) {
         const auto& block = blockRef.value();
         // Use direct block reference
     } else {
-        // Fallback to dimension lookup
+        // Fallback to dimension lookup with correct API
         auto& dimension = player.getDimension();
-        const auto& block = dimension.getBlock(blockPos);
+        auto& blockSource = dimension.getBlockSourceFromMainChunkSource();
+        const auto& block = blockSource.getBlock(blockPos);
     }
+
+    // Use correct player name method
+    logBlockedAttempt(player.getRealName(), blockPos);
 }
 ```
 
