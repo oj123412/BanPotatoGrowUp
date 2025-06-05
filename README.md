@@ -1,26 +1,70 @@
-# LeviLamina Mod Template
+# Potato Bone Meal Blocker
 
-Mod Template for LeviLamina
+A LeviLamina native plugin for Minecraft Bedrock Edition servers that specifically prevents the use of bone meal on potato crops only, while allowing bone meal to work normally on all other plants.
+
+## Features
+
+- **Targeted Prevention**: Only blocks bone meal usage on potato crops (`minecraft:potatoes`)
+- **Selective Blocking**: Allows bone meal to work normally on wheat, carrots, beetroot, and all other plants
+- **Player Feedback**: Sends clear messages to players when bone meal usage is blocked
+- **Efficient**: Minimal performance impact with targeted event handling
+- **Logging**: Comprehensive logging for debugging and monitoring
+
+## Differences from Existing Solutions
+
+Unlike the existing `forbidbonemeal` plugin that bans bone meal usage on ALL plants, this plugin:
+- ✅ **Only blocks potato crops** - wheat, carrots, beetroot work normally
+- ✅ **Surgical precision** - no interference with other gameplay mechanics
+- ✅ **Better user experience** - clear feedback about what's blocked and what isn't
+
+## Requirements
+
+- LeviLamina >= 0.13.0
+- Minecraft Bedrock Dedicated Server
+- Windows x64 platform
+
+## Installation
+
+### Method 1: Manual Installation
+
+1. Download `potato-bonemeal-blocker.dll` from releases
+2. Place in your server's `plugins/` directory
+3. Restart your server
+
+### Method 2: Build from Source
+
+```bash
+# Prerequisites: XMake + Visual Studio 2022
+git clone <repository-url>
+cd potato-bonemeal-blocker
+xmake f -a x64 -m release -p windows -y
+xmake
+# Find compiled DLL in bin/ directory
+```
 
 ## Usage
 
-For detailed instructions, see the [LeviLamina Documentation](https://lamina.levimc.org/developer_guides/tutorials/create_your_first_mod/)
+Once installed, the plugin works automatically:
 
-1. Generate a new repository from this template
-2. Clone the new repository
-3. Change the mod name and the expected LeviLamina version in `xmake.lua`
-4. Add your code.
-5. Run `xmake f -y -p windows -a x64 -m release` in the root of the repository
-6. Run `xmake` to build the mod.
+- ✅ **Allowed**: Bone meal on wheat, carrots, beetroot, saplings, flowers, etc.
+- ❌ **Blocked**: Bone meal on potato crops only
+- 📢 **Feedback**: Players receive clear messages when blocked
+- 📝 **Logging**: Server logs all prevention events
 
-After a successful build, you will find mod in `bin/`
+## Technical Implementation
 
-## Contributing
+- **Event System**: Uses `PlayerUseItemEvent` for efficient interception
+- **Block Detection**: Identifies `minecraft:potatoes` specifically
+- **Item Detection**: Identifies `minecraft:bone_meal` specifically
+- **Error Handling**: Graceful degradation on API compatibility issues
+- **Performance**: Early returns and minimal processing overhead
 
-Ask questions by creating an issue.
+## Compatibility
 
-PRs accepted.
+- **LeviLamina**: >= 0.13.0
+- **Minecraft Bedrock**: Latest stable versions
+- **Platform**: Windows x64
 
 ## License
 
-CC0-1.0 © LiteLDev
+CC0-1.0 - Public Domain Dedication

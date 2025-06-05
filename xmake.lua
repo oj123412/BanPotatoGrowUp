@@ -23,7 +23,7 @@ option("target_type")
     set_values("server", "client")
 option_end()
 
-target("my-mod") -- Change this to your mod name.
+target("potato-bonemeal-blocker") -- Main plugin target
     add_rules("@levibuildscript/linkrule")
     add_rules("@levibuildscript/modpacker")
     add_cxflags( "/EHa", "/utf-8", "/W4", "/w44265", "/w44289", "/w44296", "/w45263", "/w44738", "/w45204")
@@ -33,13 +33,38 @@ target("my-mod") -- Change this to your mod name.
     set_kind("shared")
     set_languages("c++20")
     set_symbols("debug")
-    add_headerfiles("src/**.h")
-    add_files("src/**.cpp")
+    add_headerfiles("src/mod/**.h")
+    add_files("src/mod/**.cpp")
     add_includedirs("src")
-    -- if is_config("target_type", "server") then
-    --     add_includedirs("src-server")
-    --     add_files("src-server/**.cpp")
-    -- else
-    --     add_includedirs("src-client")
-    --     add_files("src-client/**.cpp")
-    -- end
+    -- Optimization flags for release builds
+    if is_mode("release") then
+        add_cxflags("/O2", "/Ob2", "/Oi", "/Ot", "/Oy", "/GL")
+        add_ldflags("/LTCG", "/OPT:REF", "/OPT:ICF")
+        add_defines("NDEBUG")
+    end
+
+-- Test target for unit tests
+target("potato-bonemeal-blocker-test")
+    set_kind("binary")
+    set_languages("c++20")
+    add_defines("STANDALONE_TEST", "NOMINMAX", "UNICODE")
+    add_headerfiles("src/mod/**.h")
+    add_files("src/mod/PotatoBoneMealBlocker.cpp", "src/test/PotatoBoneMealBlockerTest.cpp")
+    add_includedirs("src")
+    set_symbols("debug")
+    -- Mock LeviLamina dependencies for testing
+    add_defines("MOCK_LEVILAMINA")
+    set_default(false) -- Don't build by default
+
+-- Benchmark target for performance testing
+target("potato-bonemeal-blocker-benchmark")
+    set_kind("binary")
+    set_languages("c++20")
+    add_defines("STANDALONE_BENCHMARK", "NOMINMAX", "UNICODE")
+    add_headerfiles("src/mod/**.h")
+    add_files("src/mod/PotatoBoneMealBlocker.cpp", "src/test/PerformanceBenchmark.cpp")
+    add_includedirs("src")
+    set_symbols("debug")
+    -- Mock LeviLamina dependencies for benchmarking
+    add_defines("MOCK_LEVILAMINA")
+    set_default(false) -- Don't build by default

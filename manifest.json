@@ -1,6 +1,6 @@
 {
-    "name": "${modName}",
-    "entry": "${modFile}",
-    "version": "${modVersion}",
+    "name": "PotatoBoneMealBlocker",
+    "entry": "potato-bonemeal-blocker.dll",
+    "version": "1.0.0",
     "type": "native"
 }
