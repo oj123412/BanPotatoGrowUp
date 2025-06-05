@@ -33,8 +33,19 @@ target("potato-bonemeal-blocker") -- Main plugin target
     set_kind("shared")
     set_languages("c++20")
     set_symbols("debug")
+
+    -- Explicit runtime library linking to resolve dependency issues
+    add_syslinks("kernel32", "user32", "gdi32", "winspool", "shell32", "ole32", "oleaut32", "uuid", "comdlg32", "advapi32")
+
+    -- Ensure proper runtime library linking
+    if is_mode("release") then
+        set_runtimes("MD")  -- Multi-threaded DLL runtime
+    else
+        set_runtimes("MDd") -- Multi-threaded DLL debug runtime
+    end
     add_headerfiles("src/mod/**.h")
     add_files("src/mod/**.cpp")
+    add_files("src/potato-bonemeal-blocker.def")
     add_includedirs("src")
     -- Optimization flags for release builds
     if is_mode("release") then
@@ -44,6 +55,13 @@ target("potato-bonemeal-blocker") -- Main plugin target
         -- Note: Removed /GL and /LTCG to avoid linking conflicts with LeviLamina
         -- The performance impact is minimal and build stability is more important
     end
+
+    -- Add delay loading for better dependency handling
+    add_ldflags("/DELAYLOAD:bedrock_runtime.dll")
+
+    -- Ensure proper module definition
+    add_ldflags("/EXPORT:ll_plugin_load")
+    add_ldflags("/EXPORT:ll_plugin_unload")
 
 -- Note: Additional test targets can be added here when test files are created
 -- Example targets (currently disabled due to missing files):

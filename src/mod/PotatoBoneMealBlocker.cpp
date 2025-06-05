@@ -233,3 +233,24 @@ void PotatoBoneMealBlocker::logBlockedAttempt(std::string_view playerName, const
 } // namespace potato_bonemeal_blocker
 
 LL_REGISTER_MOD(potato_bonemeal_blocker::PotatoBoneMealBlocker, potato_bonemeal_blocker::PotatoBoneMealBlocker::getInstance());
+
+// Explicit plugin export functions for better compatibility
+extern "C" {
+    __declspec(dllexport) bool ll_plugin_load() {
+        try {
+            auto& plugin = potato_bonemeal_blocker::PotatoBoneMealBlocker::getInstance();
+            return plugin.load();
+        } catch (...) {
+            return false;
+        }
+    }
+
+    __declspec(dllexport) bool ll_plugin_unload() {
+        try {
+            auto& plugin = potato_bonemeal_blocker::PotatoBoneMealBlocker::getInstance();
+            return plugin.disable();
+        } catch (...) {
+            return false;
+        }
+    }
+}
