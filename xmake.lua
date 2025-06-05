@@ -2,13 +2,13 @@ add_rules("mode.debug", "mode.release")
 
 add_repositories("liteldev-repo https://github.com/LiteLDev/xmake-repo.git")
 
--- add_requires("levilamina x.x.x") for a specific version
+-- Target LeviLamina 3 v1.2.0 for compatibility
 -- add_requires("levilamina develop") to use develop version
 -- please note that you should add bdslibrary yourself if using dev version
 if is_config("target_type", "server") then
-    add_requires("levilamina", {configs = {target_type = "server"}})
+    add_requires("levilamina 1.2.0", {configs = {target_type = "server"}})
 else
-    add_requires("levilamina", {configs = {target_type = "client"}})
+    add_requires("levilamina 1.2.0", {configs = {target_type = "client"}})
 end
 
 add_requires("levibuildscript")
@@ -23,7 +23,7 @@ option("target_type")
     set_values("server", "client")
 option_end()
 
-target("my-mod") -- Change this to your mod name.
+target("potato-bonemeal-blocker") -- Main plugin target
     add_rules("@levibuildscript/linkrule")
     add_rules("@levibuildscript/modpacker")
     add_cxflags( "/EHa", "/utf-8", "/W4", "/w44265", "/w44289", "/w44296", "/w45263", "/w44738", "/w45204")
@@ -33,13 +33,50 @@ target("my-mod") -- Change this to your mod name.
     set_kind("shared")
     set_languages("c++20")
     set_symbols("debug")
-    add_headerfiles("src/**.h")
-    add_files("src/**.cpp")
+
+    -- Explicit runtime library linking to resolve dependency issues
+    add_syslinks("kernel32", "user32", "gdi32", "winspool", "shell32", "ole32", "oleaut32", "uuid", "comdlg32", "advapi32")
+
+    -- Ensure proper runtime library linking
+    if is_mode("release") then
+        set_runtimes("MD")  -- Multi-threaded DLL runtime
+    else
+        set_runtimes("MDd") -- Multi-threaded DLL debug runtime
+    end
+    add_headerfiles("src/mod/**.h")
+    add_files("src/mod/**.cpp")
+    add_files("src/potato-bonemeal-blocker.def")
     add_includedirs("src")
-    -- if is_config("target_type", "server") then
-    --     add_includedirs("src-server")
-    --     add_files("src-server/**.cpp")
-    -- else
-    --     add_includedirs("src-client")
-    --     add_files("src-client/**.cpp")
-    -- end
+    -- Optimization flags for release builds
+    if is_mode("release") then
+        add_cxflags("/O2", "/Ob2", "/Oi", "/Ot", "/Oy")
+        add_ldflags("/OPT:REF", "/OPT:ICF")
+        add_defines("NDEBUG")
+        -- Note: Removed /GL and /LTCG to avoid linking conflicts with LeviLamina
+        -- The performance impact is minimal and build stability is more important
+    end
+
+    -- Add delay loading for better dependency handling
+    add_ldflags("/DELAYLOAD:bedrock_runtime.dll")
+
+    -- Ensure proper module definition
+    add_ldflags("/EXPORT:ll_plugin_load")
+    add_ldflags("/EXPORT:ll_plugin_unload")
+
+-- Note: Additional test targets can be added here when test files are created
+-- Example targets (currently disabled due to missing files):
+-- target("potato-bonemeal-blocker-test") - requires src/test/PotatoBoneMealBlockerTest.cpp
+-- target("potato-bonemeal-blocker-benchmark") - requires src/test/PerformanceBenchmark.cpp
+
+-- LL3 v1.2.0 compatibility test target
+target("potato-bonemeal-blocker-ll3-test")
+    set_kind("binary")
+    set_languages("c++20")
+    add_defines("STANDALONE_LL3_TEST", "NOMINMAX", "UNICODE")
+    add_headerfiles("src/mod/**.h")
+    add_files("src/mod/PotatoBoneMealBlocker.cpp", "src/test/LL3CompatibilityTest.cpp")
+    add_includedirs("src")
+    set_symbols("debug")
+    -- Mock LeviLamina dependencies for testing
+    add_defines("MOCK_LEVILAMINA")
+    set_default(false) -- Don't build by default

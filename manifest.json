@@ -1,6 +1,12 @@
 {
-    "name": "${modName}",
-    "entry": "${modFile}",
-    "version": "${modVersion}",
-    "type": "native"
+    "name": "PotatoBoneMealBlocker",
+    "entry": "potato-bonemeal-blocker.dll",
+    "version": "1.1.0",
+    "type": "native",
+    "dependencies": {
+        "LeviLamina": ">=1.2.0"
+    },
+    "description": "Prevents bone meal usage specifically on potato crops while allowing it on all other plants",
+    "author": "Plugin Developer",
+    "tags": ["gameplay", "farming", "bone-meal"]
 }
