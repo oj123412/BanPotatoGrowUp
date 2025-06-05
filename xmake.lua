@@ -47,6 +47,9 @@ target("potato-bonemeal-blocker") -- Main plugin target
     add_files("src/mod/**.cpp")
     add_files("src/potato-bonemeal-blocker.def")
     add_includedirs("src")
+
+    -- Ensure Language.cpp is included in the build
+    add_files("src/mod/Language.cpp")
     -- Optimization flags for release builds
     if is_mode("release") then
         add_cxflags("/O2", "/Ob2", "/Oi", "/Ot", "/Oy")

@@ -1,4 +1,5 @@
 #include "mod/PotatoBoneMealBlocker.h"
+#include "mod/Language.h"
 #include "ll/api/mod/RegisterHelper.h"
 #include "ll/api/event/EventBus.h"
 #include "mc/world/level/block/Block.h"
@@ -22,9 +23,13 @@ PotatoBoneMealBlocker& PotatoBoneMealBlocker::getInstance() {
 
 bool PotatoBoneMealBlocker::load() noexcept {
     try {
-        getSelf().getLogger().info("Loading Potato Bone Meal Blocker v1.1.0...");
-        getSelf().getLogger().info("Compatible with LeviLamina 3 v1.2.0");
-        getSelf().getLogger().info("Plugin initialized with optimized performance features");
+        // Initialize language system for Chinese servers
+        auto& language = Language::getInstance();
+        language.setLanguage(Language::LanguageCode::CHINESE_SIMPLIFIED);
+
+        getSelf().getLogger().info(language.getLoadingMessage());
+        getSelf().getLogger().info(language.getCompatibilityMessage());
+        getSelf().getLogger().info(language.getMessage("optimization"));
         return true;
     } catch (...) {
         // Fallback logging in case of logger issues
@@ -50,8 +55,9 @@ bool PotatoBoneMealBlocker::enable() noexcept {
             return false;
         }
 
-        getSelf().getLogger().info("Potato Bone Meal Blocker enabled successfully!");
-        getSelf().getLogger().info("Event listener registered for PlayerInteractBlockEvent");
+        auto& language = Language::getInstance();
+        getSelf().getLogger().info(language.getEnabledMessage());
+        getSelf().getLogger().info(language.getMessage("listener_registered"));
         return true;
 
     } catch (const std::exception& e) {
@@ -79,7 +85,8 @@ bool PotatoBoneMealBlocker::disable() noexcept {
             getSelf().getLogger().info("Total bone meal attempts blocked on potatoes: {}", blockedCount);
         }
 
-        getSelf().getLogger().info("Potato Bone Meal Blocker disabled successfully!");
+        auto& language = Language::getInstance();
+        getSelf().getLogger().info(language.getMessage("disabled"));
         return true;
 
     } catch (const std::exception& e) {
@@ -200,9 +207,10 @@ bool PotatoBoneMealBlocker::isBoneMeal(const ItemStack& item) const noexcept {
 
 void PotatoBoneMealBlocker::sendBlockedMessage(Player& player) const noexcept {
     try {
-        // Send both messages efficiently using compile-time constants
-        player.sendMessage(std::string{BLOCKED_MESSAGE});
-        player.sendMessage(std::string{INFO_MESSAGE});
+        // Send localized messages using the language system
+        auto& language = Language::getInstance();
+        player.sendMessage(language.getBlockedMessage());
+        player.sendMessage(language.getInfoMessage());
     } catch (const std::exception& e) {
         getSelf().getLogger().debug("Error sending message to player: {}", e.what());
     } catch (...) {
