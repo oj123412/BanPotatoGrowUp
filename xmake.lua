@@ -38,9 +38,11 @@ target("potato-bonemeal-blocker") -- Main plugin target
     add_includedirs("src")
     -- Optimization flags for release builds
     if is_mode("release") then
-        add_cxflags("/O2", "/Ob2", "/Oi", "/Ot", "/Oy", "/GL")
-        add_ldflags("/LTCG", "/OPT:REF", "/OPT:ICF")
+        add_cxflags("/O2", "/Ob2", "/Oi", "/Ot", "/Oy")
+        add_ldflags("/OPT:REF", "/OPT:ICF")
         add_defines("NDEBUG")
+        -- Note: Removed /GL and /LTCG to avoid linking conflicts with LeviLamina
+        -- The performance impact is minimal and build stability is more important
     end
 
 -- Note: Additional test targets can be added here when test files are created
