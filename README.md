@@ -6,7 +6,8 @@ A LeviLamina native plugin for Minecraft Bedrock Edition servers that specifical
 
 - **Targeted Prevention**: Only blocks bone meal usage on potato crops (`minecraft:potatoes`)
 - **Selective Blocking**: Allows bone meal to work normally on wheat, carrots, beetroot, and all other plants
-- **Player Feedback**: Sends clear messages to players when bone meal usage is blocked
+- **Player Feedback**: Sends clear localized messages to players when bone meal usage is blocked
+- **Chinese Language Support**: Full Chinese (Simplified) language support for Chinese servers
 - **Efficient**: Minimal performance impact with targeted event handling
 - **Logging**: Comprehensive logging for debugging and monitoring
 
@@ -16,6 +17,30 @@ Unlike the existing `forbidbonemeal` plugin that bans bone meal usage on ALL pla
 - ✅ **Only blocks potato crops** - wheat, carrots, beetroot work normally
 - ✅ **Surgical precision** - no interference with other gameplay mechanics
 - ✅ **Better user experience** - clear feedback about what's blocked and what isn't
+
+## Language Support
+
+### **Default: Chinese (Simplified)**
+The plugin defaults to Chinese language for Chinese Minecraft servers:
+
+**Blocked Message:** `§c骨粉不能用于土豆作物！`
+**Info Message:** `§e你仍然可以在其他作物上使用骨粉。`
+
+### **Supported Languages**
+- **Chinese Simplified (zh_CN)** - Default for Chinese servers
+- **English (en_US)** - Fallback language
+
+### **Language Configuration**
+Edit `config/potato-bonemeal-blocker.json` to change language:
+```json
+{
+    "language": {
+        "code": "zh_CN"
+    }
+}
+```
+
+**📖 Chinese Documentation:** See [README_CN.md](README_CN.md) for complete Chinese documentation.
 
 ## Requirements
 

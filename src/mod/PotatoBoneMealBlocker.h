@@ -8,6 +8,7 @@
 #include "mc/world/item/ItemStack.h"
 #include "mc/world/actor/player/Player.h"
 #include "mc/world/level/BlockPos.h"
+#include "Language.h"
 
 #include <string_view>
 #include <atomic>
@@ -37,8 +38,6 @@ public:
     // Compile-time constants for better performance
     static constexpr std::string_view POTATO_BLOCK_NAME = "minecraft:potatoes";
     static constexpr std::string_view BONE_MEAL_ITEM_NAME = "minecraft:bone_meal";
-    static constexpr std::string_view BLOCKED_MESSAGE = "§cBone meal cannot be used on potato crops!";
-    static constexpr std::string_view INFO_MESSAGE = "§7You can still use bone meal on other crops.";
 
     /**
      * @brief Get the singleton instance of the plugin
