@@ -7,6 +7,7 @@
 #include "mc/world/level/BlockPos.h"
 #include "mc/world/level/Level.h"
 #include "mc/world/level/dimension/Dimension.h"
+#include "mc/world/level/BlockSource.h"
 
 #include <string_view>
 #include <sstream>
@@ -111,7 +112,8 @@ void PotatoBoneMealBlocker::onPlayerInteractBlock(ll::event::PlayerInteractBlock
             if (!blockRef.has_value()) [[unlikely]] {
                 // Fallback: get block from dimension if direct reference not available
                 auto& dimension = player.getDimension();
-                const auto& block = dimension.getBlock(blockPos);
+                auto& blockSource = dimension.getBlockSourceFromMainChunkSource();
+                const auto& block = blockSource.getBlock(blockPos);
 
                 // Check if this is a potato crop that should be blocked
                 if (isPotatoCrop(block)) [[unlikely]] {
@@ -122,7 +124,7 @@ void PotatoBoneMealBlocker::onPlayerInteractBlock(ll::event::PlayerInteractBlock
                     sendBlockedMessage(player);
 
                     // Log the blocked attempt with optimized formatting
-                    logBlockedAttempt(player.getName(), blockPos);
+                    logBlockedAttempt(player.getRealName(), blockPos);
 
                     // Increment atomic counter for statistics
                     mBlockedCount.fetch_add(1, std::memory_order_relaxed);
@@ -140,7 +142,7 @@ void PotatoBoneMealBlocker::onPlayerInteractBlock(ll::event::PlayerInteractBlock
                     sendBlockedMessage(player);
 
                     // Log the blocked attempt with optimized formatting
-                    logBlockedAttempt(player.getName(), blockPos);
+                    logBlockedAttempt(player.getRealName(), blockPos);
 
                     // Increment atomic counter for statistics
                     mBlockedCount.fetch_add(1, std::memory_order_relaxed);
