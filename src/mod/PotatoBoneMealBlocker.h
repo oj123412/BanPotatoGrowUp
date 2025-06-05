@@ -2,7 +2,7 @@
 
 #include "ll/api/mod/NativeMod.h"
 #include "ll/api/event/EventBus.h"
-#include "ll/api/event/player/PlayerUseItemEvent.h"
+#include "ll/api/event/player/PlayerInteractBlockEvent.h"
 #include "ll/api/event/ListenerBase.h"
 #include "mc/world/level/block/Block.h"
 #include "mc/world/item/ItemStack.h"
@@ -91,10 +91,10 @@ private:
     std::atomic<std::uint64_t> mBlockedCount; ///< Thread-safe counter for blocked attempts
 
     /**
-     * @brief Event handler for player item usage
-     * @param event The PlayerUseItemEvent to process
+     * @brief Event handler for player block interaction
+     * @param event The PlayerInteractBlockEvent to process
      */
-    void onPlayerUseItem(ll::event::PlayerUseItemEvent& event) noexcept;
+    void onPlayerInteractBlock(ll::event::PlayerInteractBlockEvent& event) noexcept;
 
     /**
      * @brief Check if a block is a potato crop

@@ -43,31 +43,10 @@ target("potato-bonemeal-blocker") -- Main plugin target
         add_defines("NDEBUG")
     end
 
--- Test target for unit tests
-target("potato-bonemeal-blocker-test")
-    set_kind("binary")
-    set_languages("c++20")
-    add_defines("STANDALONE_TEST", "NOMINMAX", "UNICODE")
-    add_headerfiles("src/mod/**.h")
-    add_files("src/mod/PotatoBoneMealBlocker.cpp", "src/test/PotatoBoneMealBlockerTest.cpp")
-    add_includedirs("src")
-    set_symbols("debug")
-    -- Mock LeviLamina dependencies for testing
-    add_defines("MOCK_LEVILAMINA")
-    set_default(false) -- Don't build by default
-
--- Benchmark target for performance testing
-target("potato-bonemeal-blocker-benchmark")
-    set_kind("binary")
-    set_languages("c++20")
-    add_defines("STANDALONE_BENCHMARK", "NOMINMAX", "UNICODE")
-    add_headerfiles("src/mod/**.h")
-    add_files("src/mod/PotatoBoneMealBlocker.cpp", "src/test/PerformanceBenchmark.cpp")
-    add_includedirs("src")
-    set_symbols("debug")
-    -- Mock LeviLamina dependencies for benchmarking
-    add_defines("MOCK_LEVILAMINA")
-    set_default(false) -- Don't build by default
+-- Note: Additional test targets can be added here when test files are created
+-- Example targets (currently disabled due to missing files):
+-- target("potato-bonemeal-blocker-test") - requires src/test/PotatoBoneMealBlockerTest.cpp
+-- target("potato-bonemeal-blocker-benchmark") - requires src/test/PerformanceBenchmark.cpp
 
 -- LL3 v1.2.0 compatibility test target
 target("potato-bonemeal-blocker-ll3-test")

@@ -38,9 +38,9 @@ bool PotatoBoneMealBlocker::enable() noexcept {
         auto& eventBus = ll::event::EventBus::getInstance();
 
         // Use optimized lambda capture for better performance
-        mPlayerUseItemListener = eventBus.emplaceListener<ll::event::PlayerUseItemEvent>(
-            [this](ll::event::PlayerUseItemEvent& event) noexcept {
-                onPlayerUseItem(event);
+        mPlayerUseItemListener = eventBus.emplaceListener<ll::event::PlayerInteractBlockEvent>(
+            [this](ll::event::PlayerInteractBlockEvent& event) noexcept {
+                onPlayerInteractBlock(event);
             }
         );
 
@@ -50,7 +50,7 @@ bool PotatoBoneMealBlocker::enable() noexcept {
         }
 
         getSelf().getLogger().info("Potato Bone Meal Blocker enabled successfully!");
-        getSelf().getLogger().info("Event listener registered for PlayerUseItemEvent");
+        getSelf().getLogger().info("Event listener registered for PlayerInteractBlockEvent");
         return true;
 
     } catch (const std::exception& e) {
@@ -90,9 +90,9 @@ bool PotatoBoneMealBlocker::disable() noexcept {
     }
 }
 
-void PotatoBoneMealBlocker::onPlayerUseItem(ll::event::PlayerUseItemEvent& event) noexcept {
+void PotatoBoneMealBlocker::onPlayerInteractBlock(ll::event::PlayerInteractBlockEvent& event) noexcept {
     try {
-        const auto& itemStack = event.getItemStack();
+        const auto& itemStack = event.item();
 
         // Critical performance optimization: Early return if not bone meal
         // This check happens first to minimize processing for non-bone-meal items
@@ -100,43 +100,63 @@ void PotatoBoneMealBlocker::onPlayerUseItem(ll::event::PlayerUseItemEvent& event
             return;
         }
 
-        auto& player = event.getPlayer();
+        auto& player = event.self();
 
-        // Optimized block position retrieval with better error handling
+        // Get block position and block directly from the event
         try {
-            const auto blockPos = event.getBlockPos();
-            if (!blockPos.has_value()) [[unlikely]] {
-                return;
-            }
+            const auto& blockPos = event.blockPos();
 
-            auto& dimension = player.getDimension();
-            const auto& block = dimension.getBlock(blockPos.value());
+            // Check if we have a valid block reference
+            auto blockRef = event.block();
+            if (!blockRef.has_value()) [[unlikely]] {
+                // Fallback: get block from dimension if direct reference not available
+                auto& dimension = player.getDimension();
+                const auto& block = dimension.getBlock(blockPos);
 
-            // Check if this is a potato crop that should be blocked
-            if (isPotatoCrop(block)) [[unlikely]] {
-                // Cancel the event to prevent bone meal usage
-                event.cancel();
+                // Check if this is a potato crop that should be blocked
+                if (isPotatoCrop(block)) [[unlikely]] {
+                    // Cancel the event to prevent bone meal usage
+                    event.cancel();
 
-                // Send optimized feedback messages
-                sendBlockedMessage(player);
+                    // Send optimized feedback messages
+                    sendBlockedMessage(player);
 
-                // Log the blocked attempt with optimized formatting
-                logBlockedAttempt(player.getName(), blockPos.value());
+                    // Log the blocked attempt with optimized formatting
+                    logBlockedAttempt(player.getName(), blockPos);
 
-                // Increment atomic counter for statistics
-                mBlockedCount.fetch_add(1, std::memory_order_relaxed);
+                    // Increment atomic counter for statistics
+                    mBlockedCount.fetch_add(1, std::memory_order_relaxed);
+                }
+            } else {
+                // Use the direct block reference for better performance
+                const auto& block = blockRef.value();
+
+                // Check if this is a potato crop that should be blocked
+                if (isPotatoCrop(block)) [[unlikely]] {
+                    // Cancel the event to prevent bone meal usage
+                    event.cancel();
+
+                    // Send optimized feedback messages
+                    sendBlockedMessage(player);
+
+                    // Log the blocked attempt with optimized formatting
+                    logBlockedAttempt(player.getName(), blockPos);
+
+                    // Increment atomic counter for statistics
+                    mBlockedCount.fetch_add(1, std::memory_order_relaxed);
+                }
             }
 
         } catch (const std::exception& blockException) {
             // Log block position errors at debug level to avoid spam
-            getSelf().getLogger().debug("Could not get block position: {}", blockException.what());
+            getSelf().getLogger().debug("Could not process block interaction: {}", blockException.what());
         }
 
     } catch (const std::exception& e) {
-        getSelf().getLogger().error("Error in onPlayerUseItem: {}", e.what());
+        getSelf().getLogger().error("Error in onPlayerInteractBlock: {}", e.what());
     } catch (...) {
         // Catch-all to prevent any crashes
-        getSelf().getLogger().error("Unknown error in onPlayerUseItem");
+        getSelf().getLogger().error("Unknown error in onPlayerInteractBlock");
     }
 }
 

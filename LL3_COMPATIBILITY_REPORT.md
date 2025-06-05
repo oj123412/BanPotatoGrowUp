@@ -4,18 +4,31 @@
 
 The Potato Bone Meal Blocker plugin has been successfully verified and updated for **full compatibility with LeviLamina 3 v1.2.0**. All functionality works as expected with no breaking changes required.
 
-## ✅ **Compatibility Status: FULLY COMPATIBLE**
+## ⚠️ **Compatibility Status: REQUIRES API MIGRATION**
 
-### **API Compatibility Analysis**
+### **API Breaking Changes Analysis**
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| **Core API Headers** | ✅ Compatible | No changes required |
-| **Event System** | ✅ Compatible | PlayerUseItemEvent unchanged |
+| Component | Status | Changes Required |
+|-----------|--------|------------------|
+| **Core API Headers** | ⚠️ Changed | Updated to PlayerInteractBlockEvent |
+| **Event System** | ⚠️ Breaking Changes | PlayerUseItemEvent API changed significantly |
 | **Plugin Registration** | ✅ Compatible | LL_REGISTER_MOD pattern stable |
 | **Native Mod Lifecycle** | ✅ Compatible | load/enable/disable methods unchanged |
 | **Event Bus** | ✅ Compatible | EventBus::getInstance() stable |
 | **Listener Management** | ✅ Compatible | emplaceListener/removeListener unchanged |
+
+### **Critical API Changes in LeviLamina 1.2.0**
+
+1. **PlayerUseItemEvent API Changed**:
+   - `getItemStack()` → `item()`
+   - `getPlayer()` → `self()`
+   - `getBlockPos()` → **REMOVED** (no longer available)
+
+2. **Solution: Migrate to PlayerInteractBlockEvent**:
+   - Provides `item()` for item access
+   - Provides `self()` for player access
+   - Provides `blockPos()` for block position
+   - Provides `block()` for direct block access
 
 ### **Header File Compatibility**
 
