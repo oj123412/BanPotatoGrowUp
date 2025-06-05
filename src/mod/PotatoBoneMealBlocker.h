@@ -21,6 +21,11 @@ namespace potato_bonemeal_blocker {
  * This plugin implements a singleton pattern and uses event-driven architecture
  * to intercept PlayerUseItemEvent and selectively block bone meal usage on potatoes.
  *
+ * Compatibility:
+ * - LeviLamina 3 v1.2.0 and later
+ * - Minecraft Bedrock Edition latest versions
+ * - Windows x64 platform
+ *
  * Performance optimizations:
  * - Cached string comparisons using string_view
  * - Early returns to minimize processing

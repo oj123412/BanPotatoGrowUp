@@ -19,7 +19,7 @@ Unlike the existing `forbidbonemeal` plugin that bans bone meal usage on ALL pla
 
 ## Requirements
 
-- LeviLamina >= 0.13.0
+- LeviLamina 3 >= 1.2.0
 - Minecraft Bedrock Dedicated Server
 - Windows x64 platform
 
@@ -61,7 +61,7 @@ Once installed, the plugin works automatically:
 
 ## Compatibility
 
-- **LeviLamina**: >= 0.13.0
+- **LeviLamina**: 3 >= 1.2.0
 - **Minecraft Bedrock**: Latest stable versions
 - **Platform**: Windows x64
 

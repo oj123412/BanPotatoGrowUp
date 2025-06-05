@@ -2,13 +2,13 @@ add_rules("mode.debug", "mode.release")
 
 add_repositories("liteldev-repo https://github.com/LiteLDev/xmake-repo.git")
 
--- add_requires("levilamina x.x.x") for a specific version
+-- Target LeviLamina 3 v1.2.0 for compatibility
 -- add_requires("levilamina develop") to use develop version
 -- please note that you should add bdslibrary yourself if using dev version
 if is_config("target_type", "server") then
-    add_requires("levilamina", {configs = {target_type = "server"}})
+    add_requires("levilamina 1.2.0", {configs = {target_type = "server"}})
 else
-    add_requires("levilamina", {configs = {target_type = "client"}})
+    add_requires("levilamina 1.2.0", {configs = {target_type = "client"}})
 end
 
 add_requires("levibuildscript")
@@ -66,5 +66,18 @@ target("potato-bonemeal-blocker-benchmark")
     add_includedirs("src")
     set_symbols("debug")
     -- Mock LeviLamina dependencies for benchmarking
+    add_defines("MOCK_LEVILAMINA")
+    set_default(false) -- Don't build by default
+
+-- LL3 v1.2.0 compatibility test target
+target("potato-bonemeal-blocker-ll3-test")
+    set_kind("binary")
+    set_languages("c++20")
+    add_defines("STANDALONE_LL3_TEST", "NOMINMAX", "UNICODE")
+    add_headerfiles("src/mod/**.h")
+    add_files("src/mod/PotatoBoneMealBlocker.cpp", "src/test/LL3CompatibilityTest.cpp")
+    add_includedirs("src")
+    set_symbols("debug")
+    -- Mock LeviLamina dependencies for testing
     add_defines("MOCK_LEVILAMINA")
     set_default(false) -- Don't build by default

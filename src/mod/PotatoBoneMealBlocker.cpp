@@ -21,7 +21,8 @@ PotatoBoneMealBlocker& PotatoBoneMealBlocker::getInstance() {
 
 bool PotatoBoneMealBlocker::load() noexcept {
     try {
-        getSelf().getLogger().info("Loading Potato Bone Meal Blocker v1.0.0...");
+        getSelf().getLogger().info("Loading Potato Bone Meal Blocker v1.1.0...");
+        getSelf().getLogger().info("Compatible with LeviLamina 3 v1.2.0");
         getSelf().getLogger().info("Plugin initialized with optimized performance features");
         return true;
     } catch (...) {
